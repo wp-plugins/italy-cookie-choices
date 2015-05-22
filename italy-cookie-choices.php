@@ -3,10 +3,10 @@
  * Plugin Name: Italy Cookie Choices
  * Plugin URI: https://plus.google.com/u/0/communities/109254048492234113886
  * Description: Minimal code to make sure your website repect the Italian coockie law
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: Enea Overclokk
  * Author URI: https://plus.google.com/u/0/communities/109254048492234113886
- * Text Domain: ItalyCookieChoices
+ * Text Domain: italy-cookie-choices
  * License: GPLv2 or later
  *
  * @package Italy Cookie Choices
@@ -102,16 +102,20 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
              */
             add_action( 'wp_footer', array( $this, 'print_script_inline'), '9' );
 
-        
+            /**
+             * Only for debug
+             */
+            // var_dump($_COOKIE);
+            // var_dump(headers_list());
         }
 
         /**
-         * Add page for ItalyCookieChoices admin page
+         * Add page for italy-cookie-choices admin page
          */
         public function addMenuPage(){
 
             add_options_page(
-                __('Italy Cookie Choices Dashboard', 'ItalyCookieChoices'),
+                __('Italy Cookie Choices Dashboard', 'italy-cookie-choices'),
                 'Italy Cookie Choices',
                 $this->capability,
                 'italy-cookie-choices',
@@ -155,7 +159,8 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
             /**
             * Load Plugin Textdomain
             */
-            load_plugin_textdomain('ItalyCookieChoices', false, ITALY_COOKIE_CHOICES_BASENAME . '/languages' );
+            // load_plugin_textdomain('italy-cookie-choices', false, ITALY_COOKIE_CHOICES_PLUGIN_PATH . 'lang/' );
+            load_plugin_textdomain('italy-cookie-choices', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 
             /**
              * Create default options
@@ -163,10 +168,10 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
              */
             $this->default_options = array(
 
-                'text'          => 'Cookies help us deliver our services. By using our services, you agree to our use of cookies.',
-                'url'           => 'http://www.aboutcookies.org/',
-                'anchor_text'   => __( 'More Info', 'ItalyCookieChoices' ),
-                'button_text'   => __( 'Close', 'ItalyCookieChoices' )
+                'text'          => '',
+                'url'           => '',
+                'anchor_text'   => '',
+                'button_text'   => ''
 
                 );
 
@@ -187,7 +192,7 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
              */
             add_settings_section(
                 'italy_cl_pluginPage_section', 
-                __( 'Italy Cookie Choices options page', 'ItalyCookieChoices' ), 
+                __( 'Italy Cookie Choices options page', 'italy-cookie-choices' ), 
                 array( $this, 'italy_cl_settings_section_callback'), 
                 'italy_cl_options_group'
             );
@@ -197,7 +202,7 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
              */
             add_settings_field( 
                 'active', 
-                __( 'Activate', 'ItalyCookieChoices' ), 
+                __( 'Activate', 'italy-cookie-choices' ), 
                 array( $this, 'italy_cl_option_active'), 
                 'italy_cl_options_group', 
                 'italy_cl_pluginPage_section'
@@ -209,7 +214,7 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
              */
             add_settings_field( 
                 'banner', 
-                __( 'Where display the banner', 'ItalyCookieChoices' ), 
+                __( 'Where display the banner', 'italy-cookie-choices' ), 
                 array( $this, 'italy_cl_option_banner'), 
                 'italy_cl_options_group', 
                 'italy_cl_pluginPage_section'
@@ -220,7 +225,7 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
              */
             add_settings_field( 
                 'text', 
-                __( 'Text to display', 'ItalyCookieChoices' ), 
+                __( 'Text to display', 'italy-cookie-choices' ), 
                 array( $this, 'italy_cl_option_text'), 
                 'italy_cl_options_group', 
                 'italy_cl_pluginPage_section'
@@ -231,7 +236,7 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
              */
             add_settings_field( 
                 'url', 
-                __( 'URL for cookie policy', 'ItalyCookieChoices' ), 
+                __( 'URL for cookie policy', 'italy-cookie-choices' ), 
                 array( $this, 'italy_cl_option_url'), 
                 'italy_cl_options_group', 
                 'italy_cl_pluginPage_section'
@@ -242,7 +247,7 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
              */
             add_settings_field( 
                 'anchor_text', 
-                __( 'Anchor text for URL', 'ItalyCookieChoices' ), 
+                __( 'Anchor text for URL', 'italy-cookie-choices' ), 
                 array( $this, 'italy_cl_option_anchor_text'), 
                 'italy_cl_options_group', 
                 'italy_cl_pluginPage_section'
@@ -253,7 +258,7 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
              */
             add_settings_field( 
                 'button_text', 
-                __( 'Button text', 'ItalyCookieChoices' ), 
+                __( 'Button text', 'italy-cookie-choices' ), 
                 array( $this, 'italy_cl_option_button_text'), 
                 'italy_cl_options_group', 
                 'italy_cl_pluginPage_section'
@@ -278,7 +283,7 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
          */
         public function italy_cl_settings_section_callback() { 
 
-            _e( 'This section description', 'ItalyCookieChoices' );
+            _e( 'Customize your banner for cookie law', 'italy-cookie-choices' );
 
         }
 
@@ -293,7 +298,7 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
 
             <input type='checkbox' name='italy_cookie_choices[active]' <?php checked( $active, 1 ); ?> value='1'>
             <label for="italy_cookie_choices[active]">
-                <?php _e( 'Display banner for Cookie Law in front-end', 'ItalyCookieChoices' ); ?>
+                <?php _e( 'Display banner for Cookie Law in front-end', 'italy-cookie-choices' ); ?>
             </label>
 
         <?php
@@ -313,7 +318,7 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
             <input name="italy_cookie_choices[banner]" type="radio" value="1" id="radio_1" <?php checked( '1', $banner ); ?> />
 
             <label for="radio_1">
-                <?php _e( 'Top Bar (Default, Display a top bar wth your message)', 'ItalyCookieChoices' ); ?>
+                <?php _e( 'Top Bar (Default, Display a top bar wth your message)', 'italy-cookie-choices' ); ?>
             </label>
 
             <br>
@@ -321,7 +326,7 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
             <input name="italy_cookie_choices[banner]" type="radio" value="2" id="radio_2" <?php checked( '2', $banner ); ?> />
 
             <label for="radio_2">
-                <?php _e( 'Dialog (Display an overlay with your message)', 'ItalyCookieChoices' ); ?>
+                <?php _e( 'Dialog (Display an overlay with your message)', 'italy-cookie-choices' ); ?>
             </label>
 
         <?php
@@ -336,9 +341,10 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
 
         ?>
 
-            <textarea rows="5" name="italy_cookie_choices[text]" id="italy_cookie_choices[text]"><?php echo esc_textarea( $this->options['text'] ); ?></textarea>
+            <textarea rows="5" name="italy_cookie_choices[text]" id="italy_cookie_choices[text]" placeholder="<?php _e( 'Your short cookie policy', 'italy-cookie-choices' ) ?>" ><?php echo esc_textarea( $this->options['text'] ); ?></textarea>
+            <br>
             <label for="italy_cookie_choices[text]">
-                <?php echo __( 'People will see this notice only the first time that they enter your site', 'ItalyCookieChoices' ); ?>
+                <?php echo __( 'People will see this notice only the first time that they enter your site', 'italy-cookie-choices' ); ?>
             </label>
 
         <?php
@@ -352,10 +358,10 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
         public function italy_cl_option_url($args) {
 
         ?>
-            <input type="text" id="italy_cookie_choices[url]" name="italy_cookie_choices[url]" value="<?php echo esc_url( $this->options['url'] ); ?>" />
+            <input type="text" id="italy_cookie_choices[url]" name="italy_cookie_choices[url]" value="<?php echo esc_url( $this->options['url'] ); ?>" placeholder="<?php _e( 'e.g. http://www.aboutcookies.org/', 'italy-cookie-choices' ) ?>" />
 
             <label for="italy_cookie_choices[url]">
-                <?php echo __( 'Insert here the link to your policy page', 'ItalyCookieChoices' ); ?>
+                <?php echo __( 'Insert here the link to your policy page', 'italy-cookie-choices' ); ?>
             </label>
 
         <?php
@@ -369,10 +375,10 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
         public function italy_cl_option_anchor_text($args) {
 
         ?>
-            <input type="text" id="italy_cookie_choices[anchor_text]" name="italy_cookie_choices[anchor_text]" value="<?php echo esc_attr( $this->options['anchor_text'] ); ?>" />
+            <input type="text" id="italy_cookie_choices[anchor_text]" name="italy_cookie_choices[anchor_text]" value="<?php echo esc_attr( $this->options['anchor_text'] ); ?>" placeholder="<?php _e( 'e.g. More Info', 'italy-cookie-choices' ) ?>" />
 
             <label for="italy_cookie_choices[anchor_text]">
-                <?php echo __( 'Insert here anchor text for the link', 'ItalyCookieChoices'); ?>
+                <?php echo __( 'Insert here anchor text for the link', 'italy-cookie-choices'); ?>
             </label>
 
         <?php
@@ -386,10 +392,10 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
         public function italy_cl_option_button_text($args) {
 
         ?>
-            <input type="text" id="italy_cookie_choices[button_text]" name="italy_cookie_choices[button_text]" value="<?php echo esc_attr( $this->options['button_text'] ); ?>" />
+            <input type="text" id="italy_cookie_choices[button_text]" name="italy_cookie_choices[button_text]" value="<?php echo esc_attr( $this->options['button_text'] ); ?>" placeholder="<?php _e( 'e.g. Close', 'italy-cookie-choices' ) ?>" />
 
             <label for="italy_cookie_choices[button_text]">
-                <?php echo __( 'Insert here name of button (e.g. "Close") ', 'ItalyCookieChoices' ); ?>
+                <?php echo __( 'Insert here name of button (e.g. "Close") ', 'italy-cookie-choices' ); ?>
             </label>
 
         <?php
@@ -451,9 +457,12 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
 
             /**
              * Snippet for display banner
+             * @uses json_encode Funzione usate per il testo del messaggio.
+             *                   Ricordarsi che aggiunge già
+             *                   le doppie virgolette "" alla stringa
              * @var string
              */
-            $banner = 'document.addEventListener("DOMContentLoaded", function(event) {cookieChoices.showCookieConsent' . $banner . '("' . esc_html( $this->options['text'] ) . '", "' . esc_html( $this->options['button_text'] ) . '", "' . esc_html( $this->options['anchor_text'] ) . '", "' . esc_url( $this->options['url'] ) . '");});';
+            $banner = 'document.addEventListener("DOMContentLoaded", function(event) {cookieChoices.showCookieConsent' . $banner . '(' . wp_json_encode( $this->options['text'] ) . ', "' . esc_js( $this->options['button_text'] ) . '", "' . esc_js( $this->options['anchor_text'] ) . '", "' . esc_url( $this->options['url'] ) . '");});';
 
             echo '<!-- Italy Cookie Choices --><script>';
             require 'js/cookiechoices.php';
