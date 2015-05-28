@@ -4,7 +4,7 @@ Donate link:
 Tags: compliance, cookie law, cookies, eu cookie law, eu law, eu privacy directive, privacy, privacy directive, notification, privacy law, cookie law banner, implied consent
 Requires at least: 4.1
 Tested up to: 4.3.0
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -48,7 +48,7 @@ Yes, simply copy the snippet generate by "Italy Cookie Choses for WordPress" and
 
 = I use Async JS and CSS plugin, but the banner doesn't display =
 
-You have to uncheck the "Detect <script> tags in wp_footer" in Async JS and CSS plugin settings page and refresh page.
+You have to uncheck the `Detect <script> tags in wp_footer` in Async JS and CSS plugin settings page and refresh page.
 
 == Screenshots ==
 
@@ -58,6 +58,15 @@ You have to uncheck the "Detect <script> tags in wp_footer" in Async JS and CSS 
 4. Italy Cookie Choices Dialog Box in front end
 
 == Changelog ==
+
+= 1.2.1 =
+Release Date: May 28th, 2015
+
+Dev time: 2h
+
+* [Added checkbox for refresh page after button click](https://wordpress.org/support/topic/aggiunta-del-refresh-dopo-lok?replies=3)
+* [Fixed cookie name issue](https://github.com/overclokk/italy-cookie-choices/issues/21)
+
 
 = 1.2.0 =
 Release Date: May 27th, 2015
