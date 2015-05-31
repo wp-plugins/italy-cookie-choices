@@ -3,7 +3,7 @@
  * Plugin Name: Italy Cookie Choices
  * Plugin URI: https://plus.google.com/u/0/communities/109254048492234113886
  * Description: Minimal code to make sure your website repect the Italian coockie law
- * Version: 1.2.2
+ * Version: 1.2.3
  * Author: Enea Overclokk
  * Author URI: https://plus.google.com/u/0/communities/109254048492234113886
  * Text Domain: italy-cookie-choices
@@ -356,6 +356,28 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
             /**
              * 
              */
+            add_settings_field( 
+                'slug', 
+                __( 'Cookie policy page slug', 'italy-cookie-choices' ), 
+                array( $this, 'italy_cl_option_slug'), 
+                'italy_cl_options_group', 
+                'advanced_setting_section'
+                );
+
+            /**
+             * Checkbox for activation
+             */
+            add_settings_field( 
+                'target', 
+                __( 'Open policy in new page', 'italy-cookie-choices' ), 
+                array( $this, 'italy_cl_option_target'), 
+                'italy_cl_options_group', 
+                'advanced_setting_section'
+                );
+
+            /**
+             * 
+             */
             register_setting(
                 'italy_cl_options_group',
                 'italy_cookie_choices',
@@ -614,6 +636,45 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
         }
 
         /**
+         * Slug for cookie policy page
+         * @return strimg       Slug for cookie policy page Default null
+         */
+        public function italy_cl_option_slug($args) {
+
+            $slug = ( isset( $this->options['slug'] ) ) ? $this->options['slug'] : '' ;
+
+        ?>
+            <input type="text" id="italy_cookie_choices[slug]" name="italy_cookie_choices[slug]" value="<?php echo esc_attr( $slug ); ?>" placeholder="<?php _e( 'e.g. your-policy-url.html', 'italy-cookie-choices' ); ?>" />
+
+            <label for="italy_cookie_choices[slug]">
+                <?php _e( 'Insert your cookie policy page slug (e.g. your-policy-url), it will display only topbar in your cookie policy page', 'italy-cookie-choices' ); ?>
+            </label>
+
+        <?php
+
+        }
+
+        /**
+         * Snippet for target checkbox
+         * @return strimg       Activate for open policy page in new tab 
+         *                      Default open in same tab
+         */
+        public function italy_cl_option_target($args) {
+
+            $target = ( isset( $this->options['target'] ) ) ? $this->options['target'] : '' ;
+
+        ?>
+
+            <input type='checkbox' name='italy_cookie_choices[target]' <?php checked( $target, 1 ); ?> value='1'>
+            <label for="italy_cookie_choices[target]">
+                <?php _e( 'Open your cookie policy page in new one', 'italy-cookie-choices' ); ?>
+            </label>
+
+        <?php
+
+        }
+
+        /**
          * Sanitize data
          * @param  array $input Data to sanitize
          * @return array        Data sanitized
@@ -672,6 +733,12 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
             else
                 $new_input['cookie_value'] = sanitize_text_field( $input['cookie_value'] );
 
+            if( isset( $input['slug'] ) )
+                $new_input['slug'] = sanitize_text_field( $input['slug'] );
+
+            if( isset( $input['target'] ) )
+                $new_input['target'] =  $input['target'];
+
             return $new_input;
 
         }
@@ -691,15 +758,26 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
             if ( !isset( $this->options['active'] ) )
                 return;
 
-            if ( $this->options['banner'] === '1' )
+            /**
+             * Select what kind of banner to display
+             */
+            if ( $this->options['banner'] === '1' || !empty( $this->options['slug'] ) && ( is_page( $this->options['slug'] ) || is_single( $this->options['slug'] ) ) )
                 $banner = 'Bar';
             elseif ( $this->options['banner'] === '2' )
                 $banner = 'Dialog';
             else
                 $banner = '';
 
+            /**
+             * Accept on scroll
+             * @var bol
+             */
             $scroll = ( isset( $this->options['scroll'] ) ) ? $this->options['scroll'] : '' ;
 
+            /**
+             * Reload on accept
+             * @var bol
+             */
             $reload = ( isset( $this->options['reload'] ) ) ? $this->options['reload'] : '' ;
 
             /**
@@ -734,9 +812,15 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
             
             /**
              * If is set hmll_margin checkbox in admin panel then add margin-top to HTML tag
-             * @var [type]
+             * @var bol
              */
             $htmlM = ( isset( $this->options['html_margin'] ) ) ? $this->options['html_margin'] : '' ;
+
+            /**
+             * If set open policy page in new browser tab
+             * @var bol
+             */
+            $target = ( isset( $this->options['target'] ) ) ? $this->options['target'] : '' ;
             
             /**
              * Declarations of JS variables and set parameters
@@ -747,9 +831,10 @@ if ( !class_exists( 'Italy_Cookie_Choices' ) ){
              * var coNA = cookie name
              * var coVA = cookie val
              * var rel = Setto il reload per la pagina all'accettazione
+             * var tar = Target -blank
              * @var string
              */
-            $jsVariables = 'var coNA="' . $cookie_name . '",coVA="' . $cookie_value . '";scroll="' . $scroll . '",elPos="fixed",infoClass="",closeClass="",htmlM="' . $htmlM . '",rel="' . $reload . '";';
+            $jsVariables = 'var coNA="' . $cookie_name . '",coVA="' . $cookie_value . '";scroll="' . $scroll . '",elPos="fixed",infoClass="",closeClass="",htmlM="' . $htmlM . '",rel="' . $reload . '",tar="' . $target . '";';
 
             /**
              * Noscript snippet in case browser has JavaScript disabled
