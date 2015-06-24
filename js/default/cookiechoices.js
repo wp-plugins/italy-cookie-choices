@@ -53,7 +53,7 @@ function allowCookie() {
 
             var str = x[i].innerHTML;
             // var res = str.replace(/<!--(.*?)-->/g, "$1");
-            // Prendo l\'array creato e all\'accettazione ogni valore è messo al suo posto
+            // Prendo l'array creato e all'accettazione ogni valore e' messo al suo posto
             res = str.replace(/<cookie>/g, jsArr[i]);
             x[i].innerHTML = res;
         }
@@ -108,25 +108,33 @@ function appendJS(script){
     var cookieName = coNA;
     var cookieConsentId = 'cookieChoiceInfo';
     var dismissLinkId = 'cookieChoiceDismiss';
+    var htmlMarginOld = document.getElementsByTagName("html")[0].style.marginTop;
+
+    function ICC_outerHeight(el) {
+      var height = el.offsetHeight;
+      var style = getComputedStyle(el);
+
+      height += parseInt(style.marginTop) + parseInt(style.marginBottom);
+      return height;
+    }
 
     function _createHeaderElement(cookieText, dismissText, linkText, linkHref) {
 
-      if( htmlM ) html.className += ' icc';
-
-      var butterBarStyles = 'color:'+ btcB +';position:' + elPos + ';width:100%;background-color:' + bgB + ';' +
-          'margin:0; left:0;'+bPos+';padding:4px;z-index:9999;text-align:center;';
+      // var butterBarStyles = 'color:'+ btcB +';position:' + elPos + ';width:100%;background-color:' + bgB + ';' + 'margin:0; left:0;'+bPos+';padding:4px;z-index:9999;text-align:center;';
   
-  // Aggiungo contenitore esterno per migliorare il layout
-      //var contenitore = document.createElement('div');
-      //var contenutoContenitoreStyle =  'max-width:980px;margin-right:auto;margin-left:auto;padding:15px;';
-      //contenitore.id = cookieConsentId;
-      //contenitore.style.cssText = butterBarStyles;
+      // Aggiungo contenitore esterno per migliorare il layout
+      var contenitore = document.createElement('div');
+      // var contenutoContenitoreStyle =  'max-width:980px;margin-right:auto;margin-left:auto;padding:15px;';
+      contenitore.id = cookieConsentId;
+      contenitore.className = bannerStyle;
+      // contenitore.style.cssText = butterBarStyles;
 
       var cookieConsentElement = document.createElement('div');
-      cookieConsentElement.id = cookieConsentId;
-      cookieConsentElement.style.cssText = butterBarStyles;
+      //cookieConsentElement.id = cookieConsentId;
+      cookieConsentElement.className = contentStyle;
+      // cookieConsentElement.style.cssText = contenutoContenitoreStyle;
       cookieConsentElement.appendChild(_createConsentText(cookieText));
-  //cookieConsentElement.appendChild(_createSpace());
+      // if ( def ) cookieConsentElement.appendChild(_createSpace());
 
       if (!!linkText && !!linkHref) {
         cookieConsentElement.appendChild(_createInformationLink(linkText, linkHref));
@@ -134,39 +142,39 @@ function appendJS(script){
       cookieConsentElement.appendChild(_createDismissLink(dismissText));
       
       // Inglobo contenuto in contenitore.
-      //contenitore.appendChild(cookieConsentElement);
+      contenitore.appendChild(cookieConsentElement);
 
-      //return contenitore;
-      return cookieConsentElement;
+      return contenitore;
+      // return cookieConsentElement;
     }
 
     function _createDialogElement(cookieText, dismissText, linkText, linkHref) {
-      var glassStyle = 'position:fixed;width:100%;height:100%;z-index:999;' +
-          'top:0;left:0;opacity:0.5;filter:alpha(opacity=50);' +
-          'background-color:#ccc;';
-      var dialogStyle = 'z-index:9999;position:fixed;left:50%;top:50%;bottom:0%;';
-      var contentStyle = 'position:relative;left:-50%;margin-top:-25%;' +
-          'background-color:' + bgB + ';padding:20px;box-shadow:4px 4px 25px #888;';
+      // var glassStyle = 'position:fixed;width:100%;height:100%;z-index:999;' +
+          // 'top:0;left:0;opacity:0.5;filter:alpha(opacity=50);' +
+          // 'background-color:#ccc;';
+      // var dialogStyle = 'z-index:9999;position:fixed;top:25%;';
+      // var contentStyle = 'position:relative;' +
+          // 'background-color:' + bgB + ';padding:20px;box-shadow:4px 4px 25px #888;max-width:80%;margin:0 auto;';
 
       var cookieConsentElement = document.createElement('div');
       cookieConsentElement.id = cookieConsentId;
 
       var glassPanel = document.createElement('div');
-      glassPanel.style.cssText = glassStyle;
+      // glassPanel.style.cssText = glassStyle;
+      glassPanel.className = 'glassStyle';
 
       var content = document.createElement('div');
-      content.style.cssText = contentStyle;
-      
-  
-      
-      
+      // content.style.cssText = contentStyle;
+      content.className = contentStyle;
+
       var dialog = document.createElement('div');
-      dialog.style.cssText = dialogStyle;
+      // dialog.style.cssText = dialogStyle;
+      dialog.className = bannerStyle;
 
       var dismissLink = _createDismissLink(dismissText);
-      dismissLink.style.display = 'block';
-      dismissLink.style.textAlign = 'right';
-      dismissLink.style.marginTop = '8px';
+      // dismissLink.style.display = 'block';
+      // dismissLink.style.textAlign = 'right';
+      // dismissLink.style.marginTop = '8px';
 
       content.appendChild(_createConsentText(cookieText));
       
@@ -199,6 +207,7 @@ function appendJS(script){
     
     function _createConsentText(cookieText) {
       var consentText = document.createElement('span');
+      consentText.className = consText;
       _setElementText(consentText, cookieText);
       return consentText;
     }
@@ -211,7 +220,7 @@ function appendJS(script){
       dismissLink.id = dismissLinkId;
       dismissLink.className = closeClass;
       dismissLink.href = '#';
-      dismissLink.style.marginLeft = '24px';
+      // dismissLink.style.marginLeft = '24px';
       //dismissLink.style.cssText = buttonStyle;
       return dismissLink;
     }
@@ -224,6 +233,7 @@ function appendJS(script){
       _setElementText(infoLink, linkText);
       infoLink.className = infoClass;
       infoLink.href = linkHref;
+      // infoLink.style.marginLeft = '8px';
       if (tar) infoLink.target = '_blank';
       //infoLink.style.cssText = buttonStyle;
       return infoLink;
@@ -231,7 +241,7 @@ function appendJS(script){
 
     function _dismissLinkClick() {
 	if (_shouldDisplayConsent()) {
-		if ( htmlM ) html.classList.remove("icc");
+		if ( htmlM ) document.getElementsByTagName("html")[0].style.marginTop = htmlMarginOld;
 		allowCookie();
 		_saveUserPreference();
 		_removeCookieConsent();
@@ -249,6 +259,7 @@ function appendJS(script){
         var fragment = document.createDocumentFragment();
         fragment.appendChild(consentElement);
         document.body.appendChild(fragment.cloneNode(true));
+        if( htmlM ) document.getElementsByTagName("html")[0].style.marginTop = ICC_outerHeight(document.getElementById("cookieChoiceInfo"))+'px';
         document.getElementById(dismissLinkId).onclick = _dismissLinkClick;
         // document.onclick = _dismissLinkClick;
         if (scroll) document.onscroll = _dismissLinkClick;
