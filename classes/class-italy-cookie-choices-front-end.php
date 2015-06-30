@@ -68,10 +68,11 @@ if ( !class_exists( 'Italy_Cookie_Choices_Front_End' ) ){
             $secondViewOpt = ( isset( $this->options['secondView'] ) ) ? $this->options['secondView'] : '' ;
 
             /**
-             * Asseggno il valore allo slug nel costruttore
+             * Assegno il valore allo slug nel costruttore
+             * Default ID 1 perché su null non settava correttamente lo scroll se il valore era assente
              * @var bolean
              */
-            $this->slug = ( isset( $this->options['slug'] ) ) ? esc_attr( $this->options['slug'] ) : '' ;
+            $this->slug = ( isset( $this->options['slug'] ) && !empty( $this->options['slug'] ) ) ? esc_attr( $this->options['slug'] ) : 1 ;
 
             /*
              * Set cookie if the user agree navigating through the pages of the site
@@ -199,7 +200,7 @@ if ( !class_exists( 'Italy_Cookie_Choices_Front_End' ) ){
                     add_action('wp_head', array( $this, 'bufferBodyStart' ), 1000000);
                     add_action('wp_footer', array( $this, 'bufferBodyEnd' ), -1000000);
                 }
-                if( $custom_script_block !== '' ) {
+                if( $custom_script_block !== '' && $all_block ) {
                     add_action('template_redirect', array( $this, 'bufferHeadStart' ), 2);
                     add_action('wp_head', array( $this, 'bufferHeadEnd' ), 99999);
                     add_action('wp_footer', array( $this, 'bufferFooterStart' ), -99998);
@@ -531,6 +532,12 @@ if ( !class_exists( 'Italy_Cookie_Choices_Front_End' ) ){
             $buttonClass = ( $infoClass === $closeClass ) ? $infoClass : $infoClass . ',.' . $closeClass;
 
             /**
+             * Attribute for text for template
+             * @var string
+             */
+            $text_align = 'center';
+
+            /**
              * CSS for content style
              * @var string
              */
@@ -546,10 +553,19 @@ if ( !class_exists( 'Italy_Cookie_Choices_Front_End' ) ){
              * Conditional button style for bigbutton or smallbutton
              * Default margin
              */
-            if ( $js_template === 'bigbutton' )
+            if ( $js_template === 'bigbutton' ){
+
                 $buttonStyle = '.' . $buttonClass . '{color:' . $banner_text_color . ';padding:7px 12px;font-size:18px;line-height:18px;text-decoration:none;text-transform:uppercase;margin:10px 20px 2px 0;letter-spacing: 0.125em;display:inline-block;font-weight:normal;text-align:center;  vertical-align:middle;cursor:pointer;border:1px solid ' . $banner_text_color . ';background:rgba(255, 255, 255, 0.03);}.' . $consentText . '{display:block}';
-            elseif ( $js_template === 'smallbutton' )
+
+                $text_align = 'left';
+
+            }elseif ( $js_template === 'smallbutton' ){
+
                 $buttonStyle = '.' . $buttonClass . '{color:' . $banner_text_color . ';padding:3px 7px;font-size:14px;line-height:14px;text-decoration:none;text-transform:uppercase;margin:10px 20px 2px 0;letter-spacing: 0.115em;display:inline-block;font-weight:normal;text-align:center;  vertical-align:middle;cursor:pointer;border:1px solid ' . $banner_text_color . ';background:rgba(255, 255, 255, 0.03);}.' . $consentText . '{display:block}';
+
+                $text_align = 'left';
+
+            }
 
             /**
              * Select what kind of banner to display
@@ -565,7 +581,7 @@ if ( !class_exists( 'Italy_Cookie_Choices_Front_End' ) ){
 
                 $contentStyle = ( $js_template === 'bigbutton' || $js_template === 'smallbutton' ) ? '.contentStyle{max-width:980px;margin-right:auto;margin-left:auto;padding:15px;}' : '' ;
 
-                $style = ( $js_template === 'custom' ) ? $customCSS : '#cookieChoiceInfo{background-color: ' . $banner_bg . ';color: ' . $banner_text_color . ';left:0;margin:0;padding:4px;position:fixed;text-align:left;top:0;width:100%;z-index:9999;}' . $contentStyle . $buttonStyle;
+                $style = ( $js_template === 'custom' ) ? $customCSS : '#cookieChoiceInfo{background-color: ' . $banner_bg . ';color: ' . $banner_text_color . ';left:0;margin:0;padding:4px;position:fixed;text-align:' . $text_align . ';top:0;width:100%;z-index:9999;}' . $contentStyle . $buttonStyle;
 
                 $bPos = 'top:0'; // Deprecato
 
@@ -585,7 +601,7 @@ if ( !class_exists( 'Italy_Cookie_Choices_Front_End' ) ){
 
                 $contentStyle = ( $js_template === 'bigbutton' || $js_template === 'smallbutton' ) ? '.contentStyle{max-width:980px;margin-right:auto;margin-left:auto;padding:15px;}' : '' ;
 
-                $style = ( $js_template === 'custom' ) ? $customCSS : '#cookieChoiceInfo{background-color: ' . $banner_bg . ';color: ' . $banner_text_color . ';left:0;margin:0;padding:4px;position:fixed;text-align:left;bottom:0;width:100%;z-index:9999;}' . $contentStyle . $buttonStyle;
+                $style = ( $js_template === 'custom' ) ? $customCSS : '#cookieChoiceInfo{background-color: ' . $banner_bg . ';color: ' . $banner_text_color . ';left:0;margin:0;padding:4px;position:fixed;text-align:' . $text_align . ';bottom:0;width:100%;z-index:9999;}' . $contentStyle . $buttonStyle;
 
                 $bPos = 'bottom:0'; // Deprecato
 
@@ -593,7 +609,7 @@ if ( !class_exists( 'Italy_Cookie_Choices_Front_End' ) ){
 
                 $banner = 'Bar';
 
-                $style = ( $js_template === 'custom' ) ? $customCSS : '#cookieChoiceInfo{background-color: ' . $banner_bg . ';color: ' . $banner_text_color . ';left:0;margin:0;padding:4px;position:fixed;text-align:left;top:0;width:100%;z-index:9999;}' . $contentStyle . $buttonStyle;
+                $style = ( $js_template === 'custom' ) ? $customCSS : '#cookieChoiceInfo{background-color: ' . $banner_bg . ';color: ' . $banner_text_color . ';left:0;margin:0;padding:4px;position:fixed;text-align:center;top:0;width:100%;z-index:9999;}' . $contentStyle . $buttonStyle;
 
                 $bPos = 'top:0'; // Deprecato
 
@@ -644,7 +660,7 @@ if ( !class_exists( 'Italy_Cookie_Choices_Front_End' ) ){
              * Noscript snippet in case browser has JavaScript disabled
              * @var string
              */
-            $noscript = '<noscript><style>html{margin-top:35px}</style><div id="cookieChoiceInfo"><span>' . $text . '</span><a href="' . $url . '" class="' . $infoClass . '" target="_blank">' . $anchor_text . '</a></div></noscript>';
+            $noscript = '<noscript><style scoped>html{margin-top:35px}</style><div id="cookieChoiceInfo"><span>' . $text . '</span><a href="' . $url . '" class="' . $infoClass . '" target="_blank">' . $anchor_text . '</a></div></noscript>';
 
             /**
              * Select wich file to use in debug mode
@@ -653,7 +669,7 @@ if ( !class_exists( 'Italy_Cookie_Choices_Front_End' ) ){
             // $fileJS = ( WP_DEBUG ) ? '/js/' . $js_template . '/cookiechoices.js' : '/js/' . $js_template . '/cookiechoices.php' ;
             $fileJS = ( WP_DEBUG ) ? '/js/default/cookiechoices.js' : '/js/default/cookiechoices.php' ;
 
-            $output_html = '<!-- Italy Cookie Choices -->' . '<style>' . $style . '</style><script>' . $jsVariables . file_get_contents( ITALY_COOKIE_CHOICES_DIRNAME . $fileJS ) .  $banner . '</script>' . $noscript;
+            $output_html = '<!-- Italy Cookie Choices -->' . '<div><style scoped>' . $style . '</style><script>' . $jsVariables . file_get_contents( ITALY_COOKIE_CHOICES_DIRNAME . $fileJS ) .  $banner . '</script></div>' . $noscript;
 
             echo apply_filters( 'icc_output_html', $output_html );
 
