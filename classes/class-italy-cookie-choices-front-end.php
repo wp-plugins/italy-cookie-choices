@@ -81,19 +81,19 @@ if ( !class_exists( 'Italy_Cookie_Choices_Front_End' ) ){
 
             if(
                 // if is an HTML request (alternative methods???)
-                (strpos($_SERVER["HTTP_ACCEPT"],'html') !== false) &&
+                ( strpos( $_SERVER["HTTP_ACCEPT"],'html' ) !== false ) &&
                 //if the page isn't privacy page
-                ($_SERVER['REQUEST_URI']!=$this->slug) && 
+                ( $_SERVER['REQUEST_URI'] != $this->slug ) && 
                 //if HTTP_REFERER is set
-                (isset($_SERVER['HTTP_REFERER'])) && 
+                ( isset( $_SERVER['HTTP_REFERER'] ) ) && 
                 //if isn't refresh
-                (parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH)!=$_SERVER['REQUEST_URI']) &&
+                ( parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH) != $_SERVER['REQUEST_URI'] ) &&
                 //if referrer is not privacy page (to be evaluated)
-                (parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH)!=$this->slug) && 
+                ( parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH ) != $this->slug ) && 
                 //if the cookie is not already set
-                (!isset( $_COOKIE[ $this->options['cookie_name'] ] )) && 
+                ( !isset( $_COOKIE[ $this->options['cookie_name'] ] ) ) && 
                 //if the referer is in the same domain
-                (parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST)==$_SERVER['HTTP_HOST']) &&
+                ( parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_HOST ) == $_SERVER['HTTP_HOST'] ) &&
                 // If the secondView options is checked
                 ( $secondViewOpt )
             ) {
@@ -660,7 +660,7 @@ if ( !class_exists( 'Italy_Cookie_Choices_Front_End' ) ){
              * Noscript snippet in case browser has JavaScript disabled
              * @var string
              */
-            $noscript = '<noscript><style scoped>html{margin-top:35px}</style><div id="cookieChoiceInfo"><span>' . $text . '</span><a href="' . $url . '" class="' . $infoClass . '" target="_blank">' . $anchor_text . '</a></div></noscript>';
+            $noscript = '<noscript><style type="text/css">html{margin-top:35px}</style><div id="cookieChoiceInfo"><span>' . $text . '</span><a href="' . $url . '" class="' . $infoClass . '" target="_blank">' . $anchor_text . '</a></div></noscript>';
 
             /**
              * Select wich file to use in debug mode
@@ -669,7 +669,7 @@ if ( !class_exists( 'Italy_Cookie_Choices_Front_End' ) ){
             // $fileJS = ( WP_DEBUG ) ? '/js/' . $js_template . '/cookiechoices.js' : '/js/' . $js_template . '/cookiechoices.php' ;
             $fileJS = ( WP_DEBUG ) ? '/js/default/cookiechoices.js' : '/js/default/cookiechoices.php' ;
 
-            $output_html = '<!-- Italy Cookie Choices -->' . '<div><style scoped>' . $style . '</style><script>' . $jsVariables . file_get_contents( ITALY_COOKIE_CHOICES_DIRNAME . $fileJS ) .  $banner . '</script></div>' . $noscript;
+            $output_html = '<!-- Italy Cookie Choices -->' . '<style type="text/css">' . $style . '</style><script>' . $jsVariables . file_get_contents( ITALY_COOKIE_CHOICES_DIRNAME . $fileJS ) .  $banner . '</script>' . $noscript;
 
             echo apply_filters( 'icc_output_html', $output_html );
 
