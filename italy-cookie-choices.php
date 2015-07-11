@@ -1,13 +1,16 @@
 <?php
 /**
- * Plugin Name: Italy Cookie Choices
+ * Plugin Name: Italy Cookie Choices (for EU Cookie Law)
  * Plugin URI: https://plus.google.com/u/0/communities/109254048492234113886
  * Description: Italy Cookie Choices allows you to easily comply with the european cookie law and block third part cookie in your page.
- * Version: 2.2.2
+ * Version: 2.3.0
  * Author: Enea Overclokk, Andrea Pernici, Andrea Cardinale
  * Author URI: https://github.com/ItalyCookieChoices/italy-cookie-choices
  * Text Domain: italy-cookie-choices
  * License: GPLv2 or later
+ * Git URI: https://github.com/ItalyCookieChoices/italy-cookie-choices
+ * GitHub Plugin URI: https://github.com/ItalyCookieChoices/italy-cookie-choices
+ * GitHub Branch: master
  *
  * @package Italy Cookie Choices
  * @since 1.0.0
@@ -67,6 +70,8 @@ if ( !defined( 'ITALY_COOKIE_CHOICES_DIRNAME' ) )
  */
 require(ITALY_COOKIE_CHOICES_PLUGIN_PATH . 'admin/class-italy-cookie-choices-admin.php');
 
+// require(ITALY_COOKIE_CHOICES_PLUGIN_PATH . 'admin/class-italy-cookie-choices-admin-pointer-init.php');
+
 require(ITALY_COOKIE_CHOICES_PLUGIN_PATH . 'classes/class-italy-cookie-choices-front-end.php');
 /**
  * Requier multilingual functions
@@ -102,10 +107,12 @@ if ( ! class_exists( 'Italy_Cookie_Choices' ) ) {
             /**
              * Check if is compatible and then instantiate it
              */
-            if ( $this->is_compatible_version() && is_admin() )
-                new Italy_Cookie_Choices_Admin;
+            if ( $this->is_compatible_version() && is_admin() ){
 
-            else if ( $this->is_compatible_version() && !is_admin() )
+                new Italy_Cookie_Choices_Admin;
+                // new Italy_Cookie_Choices_Pointer_Init;
+
+            }else if ( $this->is_compatible_version() && !is_admin() )
                 new Italy_Cookie_Choices_Front_End;
 
             else

@@ -55,6 +55,12 @@ if ( !class_exists( 'Italy_Cookie_Choices_Front_End' ) ){
         private $slug = '';
 
         /**
+         * URL for policy page
+         * @var string
+         */
+        private $url = '';
+
+        /**
          * [__construct description]
          */
         public function __construct(){
@@ -72,31 +78,22 @@ if ( !class_exists( 'Italy_Cookie_Choices_Front_End' ) ){
              * Default ID 1 perché su null non settava correttamente lo scroll se il valore era assente
              * @var bolean
              */
-            $this->slug = ( isset( $this->options['slug'] ) && !empty( $this->options['slug'] ) ) ? esc_attr( $this->options['slug'] ) : 1 ;
+            $this->slug = ( isset( $this->options['slug'] ) && !empty( $this->options['slug'] ) ) ? esc_attr( get_string( 'Italy Cookie Choices', 'Banner slug', $this->options['slug'] ) ) : 1 ;
+
+            /**
+             * Assegno il valore della URL della policy page
+             * Default ID 1 perché su null non settava correttamente lo scroll se il valore era assente
+             * @var bolean
+             */
+            $this->url = ( isset( $this->options['url'] ) && !empty( $this->options['url'] ) ) ? esc_url( get_string( 'Italy Cookie Choices', 'Banner url', $this->options['url'] ) ) : 1 ;
 
             /*
              * Set cookie if the user agree navigating through the pages of the site
              */
             $secondView = false;
 
-            if(
-                // if is an HTML request (alternative methods???)
-                ( strpos( $_SERVER["HTTP_ACCEPT"],'html' ) !== false ) &&
-                //if the page isn't privacy page
-                ( $_SERVER['REQUEST_URI'] != $this->slug ) && 
-                //if HTTP_REFERER is set
-                ( isset( $_SERVER['HTTP_REFERER'] ) ) && 
-                //if isn't refresh
-                ( parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH) != $_SERVER['REQUEST_URI'] ) &&
-                //if referrer is not privacy page (to be evaluated)
-                ( parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH ) != $this->slug ) && 
-                //if the cookie is not already set
-                ( !isset( $_COOKIE[ $this->options['cookie_name'] ] ) ) && 
-                //if the referer is in the same domain
-                ( parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_HOST ) == $_SERVER['HTTP_HOST'] ) &&
-                // If the secondView options is checked
-                ( $secondViewOpt )
-            ) {
+            if( $this->is_policy_page( $secondViewOpt ) ) {
+
                 setcookie($this->options['cookie_name'], $this->options['cookie_value'], time()+(3600*24*365), '/');
                 $secondView = true;
             }
@@ -173,21 +170,19 @@ if ( !class_exists( 'Italy_Cookie_Choices_Front_End' ) ){
                  * including the button text
                  * @var string
                  */
-                $content_message_text = ( isset( $this->options['content_message_text'] ) ) ? $this->options['content_message_text']    : '' ;
+                $content_message_text = ( isset( $this->options['content_message_text'] ) ) ? wp_kses_post( get_string( 'Italy Cookie Choices', 'Content message text', $this->options['content_message_text'] ) ) : '' ;
 
                 /**
                  * Text for button in locked content and widget
                  * @var string
                  */
-                $content_message_button_text = ( isset( $this->options['content_message_button_text'] ) ) ? $this->options['content_message_button_text'] : '' ;
+                $content_message_button_text = ( isset( $this->options['content_message_button_text'] ) ) ? esc_attr( get_string( 'Italy Cookie Choices', 'Content message button text', $this->options['content_message_button_text'] ) ) : '' ;
 
                 /**
                  * Replacement for regex
                  * @var string
                  */
-                // $this->valore = '<div class="el"><div style="padding:10px;margin-bottom: 18px;color: #b94a48;background-color: #f2dede;border: 1px solid #eed3d7; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);-webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px;">' . esc_attr( $this->options['text'] ) . '<button onclick="cookieChoices.removeCookieConsent()">Try it</button></div><!-- $0 --></div>';
-                // 
-                $this->valore = '<div class="el"><div style="padding:10px;margin-bottom: 18px;color:' . esc_attr( $banner_text_color ) . ';background-color:' . esc_attr( $banner_bg ) . ';text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);">' . esc_attr( $content_message_text ) . '&nbsp;&nbsp;<button onclick="cookieChoices.removeCookieConsent()" style="color: '.esc_attr( $banner_text_color ).';padding: 3px;font-size: 12px;line-height: 12px;text-decoration: none;text-transform: uppercase;margin:0;display: inline-block;font-weight: normal; text-align: center;  vertical-align: middle;  cursor: pointer;  border: 1px solid ' . esc_attr( $banner_text_color ) . ';background: rgba(255, 255, 255, 0.03);">' . esc_attr( $content_message_button_text ) . '</button></div><cookie></div>';
+                $this->valore = '<div class="el"><div style="padding:10px;margin-bottom: 18px;color:' . esc_attr( $banner_text_color ) . ';background-color:' . esc_attr( $banner_bg ) . ';text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);">' . $content_message_text . '&nbsp;&nbsp;<button onclick="cookieChoices.removeCookieConsent()" style="color: ' . esc_attr( $banner_text_color ) . ';padding: 3px;font-size: 12px;line-height: 12px;text-decoration: none;text-transform: uppercase;margin:0;display: inline-block;font-weight: normal; text-align: center;  vertical-align: middle;  cursor: pointer;  border: 1px solid ' . esc_attr( $banner_text_color ) . ';background: rgba(255, 255, 255, 0.03);">' . $content_message_button_text . '</button></div><cookie></div>';
 
                 if ($block)
                     add_filter( 'the_content', array( $this, 'AutoErase' ), 11);
@@ -221,6 +216,62 @@ if ( !class_exists( 'Italy_Cookie_Choices_Front_End' ) ){
             }
 
         }//__construct
+
+
+        /**
+         * Get the current page url
+         * @link http://www.brosulo.net/content/informatica/ottenere-la-url-completa-da-una-pagina-php-0
+         */
+        private function CurrentPageURL() {
+
+            if ( isset( $_SERVER['HTTPS'] ) )
+                $pageURL = $_SERVER['HTTPS'];
+            else
+                $pageURL = NULL;
+
+            $pageURL = $pageURL === 'on' ? 'https://' : 'http://';
+            $pageURL .= $_SERVER["SERVER_NAME"];
+            $pageURL .= ( $_SERVER['SERVER_PORT'] !== '80' ) ? ':' . $_SERVER["SERVER_PORT"] : '';
+            $pageURL .= $_SERVER["REQUEST_URI"];
+
+            return $pageURL;
+
+        }
+
+        /**
+         * Check if is the policy page
+         * Required url input
+         * @param  boolean $secondViewOpt Check for second view option
+         * @return boolean                Return bolean value
+         */
+        private function is_policy_page( $secondViewOpt = false ){
+
+            if(
+                // if is an HTML request (alternative methods???)
+                ( strpos( $_SERVER["HTTP_ACCEPT"],'html' ) !== false ) &&
+                //if the page isn't privacy page
+                // ( $_SERVER['REQUEST_URI'] != $this->slug ) && 
+                ( $this->CurrentPageURL() !== $this->url ) && 
+                //if HTTP_REFERER is set
+                ( isset( $_SERVER['HTTP_REFERER'] ) ) && 
+                //if isn't refresh
+                ( parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH) !== $_SERVER['REQUEST_URI'] ) &&
+                //if referrer is not privacy page (to be evaluated)
+                // ( parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH ) != $this->slug ) &&
+                // ( $_SERVER['HTTP_REFERER'] !== $this->url ) &&
+                //if the cookie is not already set
+                ( !isset( $_COOKIE[ $this->options['cookie_name'] ] ) ) && 
+                //if the referer is in the same domain
+                ( parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_HOST ) === $_SERVER['HTTP_HOST'] )  &&
+                // If the secondView options is checked
+                ( $secondViewOpt )
+            )
+                return true;
+            else
+                return false;
+
+        }
+
 
         private function in_array_match($value, $array) {
             foreach($array as $k=>$v) {
@@ -639,7 +690,7 @@ if ( !class_exists( 'Italy_Cookie_Choices_Front_End' ) ){
              * function get_string return multilanguage $value
              * if isn't installed any language plugin return $value
              */
-            $text = $this->wp_json_encode( get_string( 'Italy Cookie Choices', 'Banner text', $this->options['text'] ) );
+            $text = $this->wp_json_encode( wp_kses_post( get_string( 'Italy Cookie Choices', 'Banner text', $this->options['text'] ) ) );
 
             $url = esc_url( get_string( 'Italy Cookie Choices', 'Banner url', $this->options['url'] ) );
 
