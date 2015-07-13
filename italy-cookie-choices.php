@@ -3,7 +3,7 @@
  * Plugin Name: Italy Cookie Choices (for EU Cookie Law)
  * Plugin URI: https://plus.google.com/u/0/communities/109254048492234113886
  * Description: Italy Cookie Choices allows you to easily comply with the european cookie law and block third part cookie in your page.
- * Version: 2.3.0
+ * Version: 2.3.1
  * Author: Enea Overclokk, Andrea Pernici, Andrea Cardinale
  * Author URI: https://github.com/ItalyCookieChoices/italy-cookie-choices
  * Text Domain: italy-cookie-choices
@@ -113,7 +113,11 @@ if ( ! class_exists( 'Italy_Cookie_Choices' ) ) {
                 // new Italy_Cookie_Choices_Pointer_Init;
 
             }else if ( $this->is_compatible_version() && !is_admin() )
-                new Italy_Cookie_Choices_Front_End;
+            
+                if ( function_exists('pll__') )// Compatibility with Polylang
+                    add_action( 'plugins_loaded', array( $this, 'dependency_init' ), 11 );
+                else
+                    new Italy_Cookie_Choices_Front_End;
 
             else
                 add_action( 'admin_notices', array( $this, 'load_plugin_admin_notices' ) );
@@ -162,6 +166,16 @@ if ( ! class_exists( 'Italy_Cookie_Choices' ) ) {
              * Load Lang file
              */
             load_plugin_textdomain( 'italy-cookie-choices', false, dirname( ITALY_COOKIE_CHOICES_BASENAME ) . '/lang' );
+
+        }
+
+        /**
+         * For Polylang compatibility
+         * @return void Istantiate Class
+         */
+        public function dependency_init(){
+            
+            new Italy_Cookie_Choices_Front_End;
 
         }
 
