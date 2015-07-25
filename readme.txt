@@ -1,10 +1,10 @@
-=== Italy Cookie Choices ===
+=== Italy Cookie Choices (for EU Cookie Law) ===
 Contributors: overclokk, andreapernici, cardinaleandrea
 Donate link: 
 Tags: compliance, cookie law, cookies, eu cookie law, eu law, eu privacy directive, privacy, privacy directive, notification, privacy law, cookie law banner, implied consent, third party script, third party cookie
 Requires at least: 3.5
 Tested up to: 4.3.0
-Stable tag: 2.3.4
+Stable tag: 2.3.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -114,6 +114,16 @@ if it doesn't work activate standard theme and try
 6. Italy Cookie Choices Content area
 
 == Changelog ==
+
+= 2.3.5 =
+Release Date: July 25th, 2015
+
+Dev time: 3h
+
+* Add filter for js_array `icc_js_array`
+* Fixed performance issue in sites with many posts
+* [Fixed Parse error issue #124](https://github.com/ItalyCookieChoices/italy-cookie-choices/issues/124#issuecomment-122952940)
+
 
 = 2.3.4 =
 Release Date: July 22th, 2015
@@ -328,3 +338,4 @@ a notice to the user only the very first time that visits your website without d
 * [www.cookiechoices.org](https://www.cookiechoices.org/)
 * [Loghino piccolo](http://www.posizionamento-seo.com/)
 * Romanian lang: [Florin Lungu](http://www.florinlungu.it/)
+* [Some code for WordPress Plugin Boilerplate Powered by Mte90](https://github.com/Mte90/WordPress-Plugin-Boilerplate-Powered)
